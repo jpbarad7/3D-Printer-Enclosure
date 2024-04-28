@@ -20,23 +20,23 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 
-int fc_old_temp = 0;
-int fc_old_hum = 0;
-int pe_old_temp = 0;
-int pe_old_hum = 0;
+int fc_old_temp;
+int fc_old_hum;
+int pe_old_temp;
+int pe_old_hum;
 int FC_Temp_set_point = 20;
 int FC_TSP = 20;
 int PE_Temp_set_point = 40;
 int PE_TSP = 40;
-int Filament_Heater = 0;
+int Filament_Heater;
 int Filament_bake_time = 6;
-int Enclosure_Heater = 0;
-int FC_hoursPassed = 0;
+int Enclosure_Heater;
+int FC_hoursPassed;
 int Printer_status = 1;               // Status is 'OFF' on startup - see comment below
 int ON = 0;                           // So named to avoid confusion when Raspberry Pi output pin is LOW when 'ON' and HIGH when 'OFF'
 int OFF = 1;                          // due to amplification of the signal through a N channel MOSFET
-int Override = 0;
-int Alternate = 0;
+int Override;
+int Alternate;
 
 bool FC_timerActive = false;
 bool displayTimerActive = false;      // To check if the wait timer is active
@@ -297,7 +297,7 @@ void loop()
       led1.off(); }
 
   // Printer enclosure temp control
-  if (Enclosure_Heater && (Override == 0) && (Temperature <= PE_TSP)) {
+  if (Enclosure_Heater && !Override  && (Temperature <= PE_TSP)) {
     digitalWrite(enclosure_heater_SSR, HIGH);
     digitalWrite(enclosure_heater_coil_ON_LED, HIGH);
     led2.on(); }
@@ -308,16 +308,16 @@ void loop()
 
 
   // Display Temperature and Humidity info
-  if (Filament_Heater && (Enclosure_Heater == 0) && (displayTimerActive == false)) {FilamentChamberInfo();}
+  if (Filament_Heater && !Enclosure_Heater && (displayTimerActive == false)) {FilamentChamberInfo();}
   
-  if (Enclosure_Heater && (Filament_Heater == 0) && (displayTimer2Active == false)) {PrinterEnclosureInfo();}
+  if (Enclosure_Heater && !Filament_Heater && (displayTimer2Active == false)) {PrinterEnclosureInfo();}
 
   if (Filament_Heater && Enclosure_Heater && (displayTimerActive == false) && (displayTimer2Active == false)) {
-    if (Alternate == 0) {FilamentChamberInfo();}
-    if (Alternate == 1) {PrinterEnclosureInfo();}
+    if (!Alternate) {FilamentChamberInfo();}
+    if (Alternate) {PrinterEnclosureInfo();}
   }
 
-  if ((Filament_Heater == 0) && (Enclosure_Heater == 0) && (Override == 1)) {
+  if (!Filament_Heater && !Enclosure_Heater && Override) {
     display.clearDisplay();
     display.display();} 
 
