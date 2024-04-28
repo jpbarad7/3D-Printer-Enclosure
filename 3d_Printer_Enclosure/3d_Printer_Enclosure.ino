@@ -86,7 +86,7 @@ BLYNK_WRITE(V8)
 
 BLYNK_WRITE(V10) {
   int pinValue = param.asInt();
-  if (pinValue == 1) {
+  if (pinValue) {
     Filament_Heater = 1;
     FC_timerActive = true;
     FC_hoursPassed = 0;  // Reset timer
@@ -101,7 +101,7 @@ BLYNK_WRITE(V10) {
 
 BLYNK_WRITE(V13) {
   int pinValue = param.asInt();
-  if (pinValue == 1) {
+  if (pinValue) {
     Override = 1;
     digitalWrite(enclosure_heater_status_LED, HIGH);
   } else {
