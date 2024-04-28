@@ -39,10 +39,10 @@ int Override;
 int Alternate;
 
 bool FC_timerActive = false;
-bool displayTimerActive = false;      // To check if the wait timer is active
-bool displayTimer2Active = false;     // To check if the wait timer is active
-unsigned long displayTimerStart = 0;  // To record when the timer was started
-unsigned long displayTimer2Start = 0; // To record when the timer was started
+bool FCdisplayTimerActive = false;      // To check if the wait timer is active
+bool PEdisplayTimerActive = false;     // To check if the wait timer is active
+unsigned long FCdisplayTimerStart = 0;  // To record when the timer was started
+unsigned long PEdisplayTimerStart = 0; // To record when the timer was started
 const long displayDelay = 5000;       // Delay of 5 seconds
 
 float temperature, humidity;          // AM2315 sensor in filament chamber
@@ -186,8 +186,8 @@ void FilamentChamberInfo ()
         display.display();
 
         // Activate display timer and set start time
-        displayTimerActive = true;
-        displayTimerStart = millis();           
+        FCdisplayTimerActive = true;
+        FCdisplayTimerStart = millis();           
      }
 
     fc_old_temp = temperature;
@@ -219,8 +219,8 @@ void PrinterEnclosureInfo()
         display.display();
 
         // Activate display timer and set start time
-        displayTimer2Active = true;
-        displayTimer2Start = millis();
+        PEdisplayTimerActive = true;
+        PEdisplayTimerStart = millis();
      }
 
   pe_old_temp = Temperature;
@@ -247,13 +247,13 @@ void loop()
   timer.run();
   Serial.println("here");
 
-  if (displayTimerActive && (millis() - displayTimerStart >= displayDelay)) {
-          displayTimerActive = false;
+  if (FCdisplayTimerActive && (millis() - FCdisplayTimerStart >= displayDelay)) {
+          FCdisplayTimerActive = false;
           Alternate = 1;
   }
           
-  if (displayTimer2Active && (millis() - displayTimer2Start >= displayDelay)) {
-          displayTimer2Active = false;
+  if (PEdisplayTimerActive && (millis() - PEdisplayTimerStart >= displayDelay)) {
+          PEdisplayTimerActive = false;
           Alternate = 0;
   }
                 
@@ -308,11 +308,11 @@ void loop()
 
 
   // Display Temperature and Humidity info
-  if (Filament_Heater && !Enclosure_Heater && (displayTimerActive == false)) {FilamentChamberInfo();}
+  if (Filament_Heater && !Enclosure_Heater && (FCdisplayTimerActive == false)) {FilamentChamberInfo();}
   
-  if (Enclosure_Heater && !Filament_Heater && (displayTimer2Active == false)) {PrinterEnclosureInfo();}
+  if (Enclosure_Heater && !Filament_Heater && (PEdisplayTimerActive == false)) {PrinterEnclosureInfo();}
 
-  if (Filament_Heater && Enclosure_Heater && (displayTimerActive == false) && (displayTimer2Active == false)) {
+  if (Filament_Heater && Enclosure_Heater && (FCdisplayTimerActive == false) && (PEdisplayTimerActive == false)) {
     if (!Alternate) {FilamentChamberInfo();}
     if (Alternate) {PrinterEnclosureInfo();}
   }
