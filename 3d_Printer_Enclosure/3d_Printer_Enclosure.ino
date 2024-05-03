@@ -32,21 +32,21 @@ int Filament_Heater;
 int Filament_bake_time = 6;
 int Enclosure_Heater;
 int FC_hoursPassed;
-int Printer_status = 1;               // Status is 'OFF' on startup - see comment below
-int ON = 0;                           // So named to avoid confusion when Raspberry Pi output pin is LOW when 'ON' and HIGH when 'OFF'
-int OFF = 1;                          // due to amplification of the signal through a N channel MOSFET
+int Printer_status = 1;                 // Status is 'OFF' on startup - see comment below
+int ON = 0;                             // So named to avoid confusion when Raspberry Pi output pin is LOW when 'ON' and HIGH when 'OFF'
+int OFF = 1;                            // due to processing of the signal through a N channel MOSFET
 int Override;
 int Alternate;
 
 bool FC_timerActive = false;
 bool FCdisplayTimerActive = false;      // To check if the wait timer is active
-bool PEdisplayTimerActive = false;     // To check if the wait timer is active
+bool PEdisplayTimerActive = false;      // To check if the wait timer is active
 unsigned long FCdisplayTimerStart = 0;  // To record when the timer was started
-unsigned long PEdisplayTimerStart = 0; // To record when the timer was started
-const long displayDelay = 5000;       // Delay of 5 seconds
+unsigned long PEdisplayTimerStart = 0;  // To record when the timer was started
+const long displayDelay = 5000;         // Delay of 5 seconds
 
-float temperature, humidity;          // AM2315 sensor in filament chamber
-float Temperature, Humidity;          // BM280 sensor in enclosure
+float temperature, humidity;            // AM2315 sensor in filament chamber
+float Temperature, Humidity;            // BM280 sensor in enclosure
 
 BlynkTimer timer;
 Adafruit_SH1107 display = Adafruit_SH1107(64, 128, &Wire);
@@ -185,7 +185,7 @@ void FilamentChamberInfo ()
         display.print(humidity);
         display.display();
 
-        // Activate display timer and set start time
+        // Activate display timer
         FCdisplayTimerActive = true;
         FCdisplayTimerStart = millis();           
      }
@@ -218,7 +218,7 @@ void PrinterEnclosureInfo()
         display.print(Humidity);
         display.display();
 
-        // Activate display timer and set start time
+        // Activate display timer
         PEdisplayTimerActive = true;
         PEdisplayTimerStart = millis();
      }
@@ -263,7 +263,7 @@ void loop()
 
   Printer_status = digitalRead(rp_heater_output_signal);
 
-  if (Printer_status) {
+  if (Printer_status == ON) {
     if (Override) {
       Enclosure_Heater = 0;
       Blynk.virtualWrite(V11, LOW);
